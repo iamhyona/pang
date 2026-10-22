@@ -63,6 +63,13 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .ob:active{transform:translateY(2px)}
 .keys{color:var(--sub);font-size:9px;display:grid;grid-template-columns:auto auto;gap:4px 6px;align-items:center;margin-top:34px}
 .keys+.credit{margin-top:10px}
+#startOv{justify-content:flex-start}
+#startOv::before{content:'';flex:1 1 0}
+#startOv::after{content:'';flex:.38 1 0}
+#startOv #startB{margin-top:40px}
+#startOv #rankB{margin-top:12px}
+#startOv .keys{margin-top:64px}
+#startOv .keys+.credit{margin-top:22px}
 .keys kbd{font-family:var(--f);border:1px solid #4a4b58;border-radius:4px;padding:2px 4px;color:var(--hi);font-size:9px;justify-self:end}
 .credit{color:#6c6d7c;font-size:11px;text-align:center;line-height:1.7}
 .go{font-size:46px;color:var(--red);text-shadow:0 0 12px rgba(255,59,92,.6);line-height:1.1;text-align:center;letter-spacing:.05em}
