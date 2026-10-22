@@ -60,7 +60,8 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .ob.gold{border-color:#d9a400;box-shadow:none;color:var(--gold);height:44px}
 .ob.red{border-color:#e8284f;color:#ff8aa0;box-shadow:none;height:44px}
 .ob:active{transform:translateY(2px)}
-.keys{color:var(--sub);font-size:12px;display:grid;grid-template-columns:auto auto;gap:6px 8px;align-items:center;margin-top:4px}
+.keys{color:var(--sub);font-size:12px;display:grid;grid-template-columns:auto auto;gap:6px 8px;align-items:center;margin-top:34px}
+.keys+.credit{margin-top:10px}
 .keys kbd{font-family:var(--f);border:1.5px solid #4a4b58;border-radius:6px;padding:4px 7px;color:var(--hi);font-size:12px;justify-self:end}
 .credit{color:#6c6d7c;font-size:11px;text-align:center;line-height:1.7}
 .go{font-size:46px;color:var(--red);text-shadow:0 0 12px rgba(255,59,92,.6);line-height:1.1;text-align:center;letter-spacing:.05em}
@@ -91,12 +92,12 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
         <div class="bx"><span>NEXT</span><canvas id="nx"></canvas></div>
         <div class="bx"><span>STAGE</span><b id="stg">001</b></div>
         <div class="bx"><span>SCORE</span><b id="sc">0</b></div>
-        <div class="bx"><span>CHAIN</span><b id="ch">00</b></div>
+        <div class="bx"><span>COMBO</span><b id="ch">00</b></div>
         <div style="flex:1"></div>
         <button class="sb" id="pauseB">PAUSE</button>
         <button class="sb" id="restartB">RESTART</button>
       </div>
-      <div class="bw"><div class="well" id="well"><canvas id="cv"></canvas></div><div class="chain" id="chain"><b id="chainT">2 연쇄!</b><span>CHAIN BONUS</span></div></div>
+      <div class="bw"><div class="well" id="well"><canvas id="cv"></canvas></div><div class="chain" id="chain"><b id="chainT">2 COMBO!</b><span>COMBO BONUS</span></div></div>
     </div>
 
     <div class="ov" id="startOv">
@@ -110,7 +111,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
     <div class="ov" id="pauseOv" hidden><div class="paused">PAUSE</div><button class="ob" id="resumeB">CONTINUE</button><button class="ob red" id="quitB">GIVE UP</button></div>
     <div class="ov" id="overOv" hidden>
       <div class="go">GAME<br>OVER</div>
-      <div class="st"><div>SCORE<b id="oS">0</b></div><div>MAX 연쇄<b id="oC">0</b></div><div>STAGE<b id="oL">1</b></div></div>
+      <div class="st"><div>SCORE<b id="oS">0</b></div><div>MAX COMBO<b id="oC">0</b></div><div>STAGE<b id="oL">1</b></div></div>
       <form class="nm" id="nmF" autocomplete="off"><input id="nmI" maxlength="8" placeholder="이름" aria-label="이름"><button type="submit">랭킹 등록</button></form>
       <div class="rk"><h4>RANKING</h4><ol id="rkL"></ol></div>
       <div class="row"><button class="ob" id="againB">ONE MORE</button><button class="ob" id="homeB">HOME</button></div>
@@ -200,7 +201,7 @@ function resolve(chain){
     const bonus=Math.max(1,Math.min(999,(CP[Math.min(chain,CP.length-1)]||0)+gs.reduce((a,g)=>a+GB(g.g.length),0)+CB[colors]));
     const gain=10*n*bonus;score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
     const ns=1+Math.floor(popped/40);if(ns>stage){stage=ns;if(chain<2)showChain("STAGE "+pad(stage,3),"SPEED UP")}
-    if(chain>=2)showChain(chain+" 연쇄!","CHAIN BONUS");
+    if(chain>=2)showChain(chain+" COMBO!","COMBO BONUS");
     anim={type:"pop",t:0,dur:POPA+POPB,chain,gain,gs,cells:gs.flatMap(g=>g.g),burst:false,done:()=>{for(const [x,y] of anim.cells)G[y][x]=0;anim=null;hud();resolve(chain+1)}}};
   if(mv.length){const dur=Math.max(...mv.map(m=>110+m.d*85));anim={type:"fall",t:0,dur:dur+20,moves:mv,done:()=>{for(const m of mv)if(LT[m.to][m.x]>NOW)LT[m.to][m.x]=NOW;anim=null;after()}}}else after()}
 function burst(a){
@@ -310,7 +311,7 @@ function home(){state=null;G=null;cur=null;vis=null;queue=null;anim=null;parts=[
 const RK="pang-rank";let mine=null;
 const rkLoad=()=>{try{return JSON.parse(store.get(RK)||"[]")}catch(e){return[]}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}<small>${r.c}연쇄</small><b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
+function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}<small>${r.c} COMBO</small><b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
   const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
 $("startB").onclick=start;$("againB").onclick=start;$("homeB").onclick=home;
