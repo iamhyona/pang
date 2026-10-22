@@ -242,10 +242,9 @@ function burst(a){
       for(let i=0;i<Math.round(9*mul);i++){const an=Math.random()*6.283,sp=(140+Math.random()*220)*k*(.85+mul*.25);parts.push({x:px,y:py,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp-90*k,g:620*k,life:.55+Math.random()*.4,t:0,s:(5+Math.random()*6)*k,col:COL[g.c][i%3===0?1:0],star:i%3===0,rot:Math.random()*6,vr:(Math.random()-.5)*12})}
       for(let i=0;i<4;i++){const an=Math.random()*6.283,sp=(60+Math.random()*120)*k;parts.push({x:px,y:py,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,g:0,life:.35+Math.random()*.25,t:0,s:3*k,col:"#ffffff",star:false,rot:0,vr:0})}}
     sx/=g.g.length;sy/=g.g.length;rings.push({x:sx,y:sy,t:0,life:.45,col:COL[g.c][1],r0:CS*.4,r1:CS*(1.4+g.g.length*.12)*(.9+mul*.2)});
-    if(ch>=2)rings.push({x:sx,y:sy,t:-.08,life:.55,col:"#ffffff",r0:CS*.3,r1:CS*(2+ch*.35)});
-    floats.push({pang:1,x:sx,y:sy-CS*.2,t:0,life:1.05,txt:"팡".repeat(Math.min(ch,4))+"!",col:COL[g.c][0],sc:Math.min(1.9,1+(ch-1)*.28),rot:(Math.random()-.5)*.35})}
+    if(ch>=2)rings.push({x:sx,y:sy,t:-.08,life:.55,col:"#ffffff",r0:CS*.3,r1:CS*(2+ch*.35)})}
   const c0=a.gs[0].g;let mx=0,my=0;for(const [x,y] of c0){mx+=x;my+=y}mx=mx/c0.length*CS+CS/2;my=(my/c0.length-HID)*CS+CS/2;
-  floats.push({x:mx,y:my+CS*.7,t:0,life:1,txt:"+"+a.gain.toLocaleString(),big:a.chain>=2});
+  floats.push({x:mx,y:my,t:0,life:1,txt:"+"+a.gain.toLocaleString(),big:a.chain>=2});
   if(ch>=2)flashA=Math.min(.55,.18+ch*.09);
   shake=Math.min(14,2+a.chain*2.5);shakeA=1;sfx(a.chain)}
 function showChain(a,b){const e=$("chain");$("chainT").textContent=a;e.querySelector("span").textContent=b;e.classList.remove("on");void e.offsetWidth;e.classList.add("on")}
