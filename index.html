@@ -60,6 +60,11 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .ob{width:232px;max-width:100%;height:48px;border:3px solid #5d5f70;box-shadow:inset 0 0 0 3px #101116,inset 0 0 0 5px #2a2b33;background:#131419;color:var(--txt);font-family:var(--btn);font-size:16px;letter-spacing:.18em;cursor:pointer}
 .ob.gold{border-color:#d9a400;box-shadow:none;color:var(--gold);height:44px}
 .ob.red{border-color:#e8284f;color:#ff8aa0;box-shadow:none;height:44px}
+.ob.mode{height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.ob.mode small{font-family:var(--f);font-size:11px;letter-spacing:.05em;opacity:.75}
+.ob.easy{border-color:#00a8e0;color:#7fe0ff;box-shadow:none}
+.mx{background:none;border:0;color:#bfc3c9;font-size:22px;padding:6px 14px;cursor:pointer;font-family:var(--btn)}
+.rk li i{font-style:normal;font-family:var(--btn);font-size:8px;margin-left:6px}
 .ob:active{transform:translateY(2px)}
 .keys{color:var(--sub);font-size:9px;display:grid;grid-template-columns:auto auto;gap:4px 6px;align-items:center;margin-top:34px}
 .keys+.credit{margin-top:10px}
@@ -142,6 +147,12 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
       <form class="nm" id="nmF" autocomplete="off"><input id="nmI" maxlength="8" placeholder="이름" aria-label="이름"><button type="submit">랭킹 등록</button></form>
       <div class="rk"><h4>RANKING</h4><ol id="rkL"></ol></div>
       <div class="row"><button class="ob" id="againB">ONE MORE</button><button class="ob" id="homeB">HOME</button></div>
+    </div>
+    <div class="ov" id="modeOv" hidden>
+      <button class="ob mode easy" data-m="easy">EASY MODE<small>SCORE ×0.5 · 가이드</small></button>
+      <button class="ob mode" data-m="normal">NORMAL MODE<small>SCORE ×1</small></button>
+      <button class="ob mode red" data-m="hard">HARD MODE<small>SCORE ×2</small></button>
+      <button class="mx" id="modeX" aria-label="닫기">✕</button>
     </div>
     <div class="ov" id="rankOv" hidden><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="ob" id="rankClose">CLOSE</button></div>
   </div>
@@ -230,10 +241,10 @@ const POPA=230,POPB=330;
 function resolve(chain){
   const mv=dropCells();
   const after=()=>{const gs=groups();
-    if(!gs.length){if(chain>1&&G.every(r=>r.every(v=>!v))){score+=2100;showChain("ALL CLEAR","+2100")}hud();if(state==="play"||state==="pause")spawn();return}
+    if(!gs.length){if(chain>1&&G.every(r=>r.every(v=>!v))){const ac=Math.round(2100*mm().mul);score+=ac;showChain("ALL CLEAR","+"+ac)}hud();if(state==="play"||state==="pause")spawn();return}
     const n=gs.reduce((a,g)=>a+g.g.length,0),colors=new Set(gs.map(g=>g.c)).size;
     const bonus=Math.max(1,Math.min(999,(CP[Math.min(chain,CP.length-1)]||0)+gs.reduce((a,g)=>a+GB(g.g.length),0)+CB[colors]));
-    const gain=10*n*bonus;score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
+    const gain=Math.round(10*n*bonus*mm().mul);score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
     const ns=1+Math.floor(popped/40);if(ns>stage){stage=ns;if(chain<2)showChain("STAGE "+pad(stage,3),"SPEED UP")}
     if(chain>=2)showChain(chain+" COMBO!","COMBO BONUS");
     anim={type:"pop",t:0,dur:POPA+POPB,chain,gain,gs,cells:gs.flatMap(g=>g.g),burst:false,done:()=>{for(const [x,y] of anim.cells)G[y][x]=0;anim=null;hud();resolve(chain+1)}}};
@@ -255,7 +266,8 @@ function sfx(chain){try{AC=AC||new (window.AudioContext||window.webkitAudioConte
   const o=AC.createOscillator(),g=AC.createGain();o.type="square";const f=440*Math.pow(2,Math.min(chain-1,12)/6);o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.8,t+.09);g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(g).connect(AC.destination);o.start();o.stop(t+.24);
   const n=AC.createBufferSource(),b=AC.createBuffer(1,AC.sampleRate*.12,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);n.buffer=b;const ng=AC.createGain();ng.gain.value=.05;n.connect(ng).connect(AC.destination);n.start(t)}catch(e){}}
 function plop(){try{if(!AC)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(320,t);o.frequency.exponentialRampToValueAtTime(140,t+.08);g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g).connect(AC.destination);o.start();o.stop(t+.12)}catch(e){}}
-const speed=()=>Math.max(90,800-(stage-1)*70);
+let mode='normal';const MODES={easy:{spd:1.35,mul:.5},normal:{spd:1,mul:1},hard:{spd:.72,mul:2}};const mm=()=>MODES[mode]||MODES.normal;
+const speed=()=>Math.max(70,Math.round((800-(stage-1)*70)*mm().spd));
 const ease=(v,t,dt,ms)=>v+(t-v)*(1-Math.exp(-dt/ms));
 function tick(t){requestAnimationFrame(tick);const dt=Math.min(50,t-(lastT||t));lastT=t;NOW=t;
   if(state==="play"){
@@ -298,6 +310,7 @@ function draw(){const c=cx,t=NOW||performance.now();c.setTransform(DPR,0,0,DPR,0
       if(T<POPA){const p=T/POPA,j=(Math.random()-.5)*CS*.08*p,sc=1+.28*Math.sin(p*Math.PI/2);sprite(v,"x",px+j,py+j,CS,sc,sc,1,.15+.55*p)}
       else{const p=(T-POPA)/POPB,sc=1.28*(1-p)*(1+.15*p);if(sc>.05)sprite(v,"x",px,py+CS*.4*p*0,CS,sc*1.05,sc*.95,1-p*.6,.7)}}}
   if(cur&&vis&&state!=="over"){let gy=0;while(fits({...cur,y:cur.y+gy+1}))gy++;
+    if(mode==="easy"&&gy>0&&!cur.drop){c.strokeStyle="rgba(255,255,255,.3)";c.lineWidth=2;c.setLineDash([4,4]);for(const [x,y] of cells({...cur,y:cur.y+gy}))if(y>=HID){c.beginPath();c.arc(x*CS+CS/2,(y-HID)*CS+CS/2,CS*.32,0,7);c.stroke()}c.setLineDash([])}
     const a=vis.a*Math.PI/180,ch=[vis.x+Math.sin(a),vis.y-Math.cos(a)],wob=Math.sin(t/140)*.03;
     c.save();c.shadowColor="rgba(255,255,255,.5)";c.shadowBlur=12;
     const ms=cur.drop?"o":"";
@@ -340,7 +353,7 @@ scr.addEventListener("pointerup",e=>{if(!sw)return;const dy=e.clientY-sw.y,dt=pe
   if(dy>CS*1.4&&(dt<220||sw.vy>.9))act("H");else if(!sw.moved&&Math.abs(dy)<CS*.5&&dt<350)act("CW");sw=null});
 scr.addEventListener("pointercancel",()=>{sw=null;soft=false});
 /* ---------- flow ---------- */
-function start(){["startOv","overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
+function start(){["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function pause(on){if(!G||state==="over")return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0}
 function gameOver(){state="over";cur=null;const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
   $("oS").textContent=score.toLocaleString();$("oC").textContent=maxChain;$("oL").textContent=stage;
@@ -349,10 +362,11 @@ function home(){state=null;G=null;cur=null;vis=null;queue=null;anim=null;parts=[
 const RK="pang-rank";let mine=null;
 const rkLoad=()=>{try{return JSON.parse(store.get(RK)||"[]")}catch(e){return[]}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}<small>${r.c} COMBO</small><b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
+function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}<small>${r.c} COMBO</small>${r.m?`<i style="color:${{easy:"#7fe0ff",hard:"#ff8aa0"}[r.m]||"#d9d9e2"}">${r.m.toUpperCase()}</i>`:""}<b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
-  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
-$("startB").onclick=start;$("againB").onclick=start;$("homeB").onclick=home;
+  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
+$("startB").onclick=()=>{$("startOv").hidden=true;$("modeOv").hidden=false};$("modeX").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
+document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);start()});$("againB").onclick=start;$("homeB").onclick=home;
 $("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("quitB").onclick=()=>{$("pauseOv").hidden=true;gameOver()};
 $("restartB").onclick=()=>{if(state==="play"||state==="pause"||state==="over")start()};
