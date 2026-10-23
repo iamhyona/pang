@@ -20,7 +20,7 @@
 <meta name="apple-mobile-web-app-title" content="팡팡">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>팡팡</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:"NeoDunggeunmo";src:url(https://cdn.jsdelivr.net/npm/@kfonts/neodgm@0.5.0/neodgm.woff2) format("woff2");font-display:block}
 :root{--btn:"Silkscreen",var(--f);--bg:#0b0b0f;--scr:#14151a;--line:#2c2d36;--line2:#363743;--txt:#f2f2f7;--sub:#8f90a0;--hi:#d9d9e2;--gold:#f2b000;--red:#ff3b5c;--f:"NeoDunggeunmo",ui-monospace,monospace}
@@ -108,7 +108,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .pix[data-ic=bolt]{color:var(--gold);width:12px;height:12px}
 #bgmB.off .pix,#sfxB.off .pix{opacity:.3}
 </style>
-<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1792736054";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}}).catch(function(){})}catch(e){}})();</script>
+<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1792739304";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}}).catch(function(){})}catch(e){}})();</script>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>/* 카톡 등 인앱 브라우저: 실제 보이는 높이로 화면 맞춤 */(function(){var d=document.documentElement;function f(){var h=window.innerHeight,v=window.visualViewport;if(v&&v.height>0)h=Math.min(h,Math.round(v.height));d.style.setProperty('--app-h',h+'px');if(typeof layout==='function')requestAnimationFrame(function(){layout()})}f();addEventListener('resize',f);if(window.visualViewport)visualViewport.addEventListener('resize',f);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(f);addEventListener('orientationchange',function(){setTimeout(f,300)});addEventListener('pageshow',f);setTimeout(f,250);setTimeout(f,1000)})();</script>
 <style>html,body{height:var(--app-h,100%)!important}@media (max-width:519px){.ph{bottom:auto!important;height:var(--app-h,100%)!important}}</style>
@@ -120,10 +120,10 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .st b{font-size:18px!important}
 .go{font-size:40px!important}
 </style>
-</head>
+<link rel="stylesheet" href="../games/ph.css?v=1"><style>#startOv{padding:0!important}#startOv::before,#startOv::after{display:none!important}.lcd-label{padding-left:2px;padding-right:2px}</style></head>
 <body>
 <div class="ph">
-  <div class="hd"><span class="rb" id="rb1"></span><span>© 2026 PARK HYONA</span><span class="rb r" id="rb2"></span></div>
+  <div class="lcd-label"><i class="ln"></i><span class="copy">© 2026 PARK HYONA</span><i class="ln"></i></div>
   <div class="scr" id="scr">
     <div class="fld" id="fld">
       <div class="side" id="side">
@@ -139,18 +139,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
       <div class="bw"><div class="well" id="well"><canvas id="cv"></canvas></div><div class="chain" id="chain"><b id="chainT">2 COMBO!</b><span>COMBO BONUS</span></div></div>
     </div>
 
-    <div class="ov" id="startOv">
-      <div id="logo"></div>
-      <div class="show" id="show"></div>
-      <i class="sp" style="flex:92 1 0"></i>
-      <button class="ob" id="startB">SINGLE PLAY</button>
-      <i class="sp" style="flex:32 1 0"></i>
-      <button class="ob gold" id="rankB">RANKING</button>
-      <i class="sp" style="flex:86 1 0"></i>
-      <div class="keys"><kbd>← 밀기 →</kbd><span>이동</span><kbd>탭</kbd><span>돌리기</span><kbd>↓ 천천히 밀기</kbd><span>천천히</span><kbd>↓ 튕기기</kbd><span>바로 내리기</span></div>
-      <i class="sp" style="flex:44 1 0"></i>
-      <div class="credit">이 게임은 서울 마포구에 사는 박현아가 만든<br>비상업용 게임이에요. 같은 모양 셋이면 팡!</div>
-    </div>
+    <div class="ov" id="startOv"><div class="phS"><i class="phS-sp a"></i><div class="phS-logo" data-word="PANGPANG" id="logo"></div><div class="phS-show" id=show></div><i class="phS-sp b"></i><div class="phS-btns"><button class="phS-b" id="startB">SINGLE PLAY</button><button class="phS-b gold" id="rankB">RANKING</button></div><i class="phS-sp c"></i><div class="phS-credit">이 게임은 서울 마포구에 사는 박현아가 만든<br>비상업용 게임이에요. 지치고 힘들 때<br>잠시 머리 식히며 마음껏 즐겨 주세요.</div></div></div>
     <div class="ov" id="pauseOv" hidden><div class="paused">PAUSE</div><button class="ob" id="resumeB">CONTINUE</button><button class="ob red" id="quitB">GIVE UP</button></div>
     <div class="ov" id="overOv" hidden>
       <div class="go">GAME<br>OVER</div>
@@ -197,7 +186,7 @@ const IMG={};
 for(let c=1;c<=7;c++)for(const m of ["","b","o","x"]){const im=new Image();im.onload=()=>drawNext();im.src=svgURL(pieceSVG(c,m));IMG[m+c]=im}
 /* ---------- deco ---------- */
 const RBC=['#e8284f','#f26a0d','#f2b000','#10b870','#00a8e0','#2f6bf0','#8a3cf0'];
-$("rb1").innerHTML=$("rb2").innerHTML=RBC.flatMap(c=>Array(6).fill(`<i style="background:${c}"></i>`)).join("");
+
 (function logo(){const L={P:"11110100011000111110100001000010000",A:"01110100011000111111100011000110001",N:"10001110011010110011100011000110001",G:"01111100001000010111100011000101111"};
   const W="PANGPANG",cell=9,w=W.length*6*cell-cell;let o="";[...W].forEach((ch,i)=>{const g=L[ch];for(let y=0;y<7;y++)for(let x=0;x<5;x++){const on=g[y*5+x]==="1";o+=`<circle cx="${i*6*cell+x*cell+cell/2}" cy="${y*cell+cell/2}" r="${cell*.38}" fill="${on?RBC[i*2%7]:"rgba(255,255,255,.06)"}"/>`}});
   $("logo").innerHTML=`<svg class="logo" width="${w}" height="${7*cell}" viewBox="0 0 ${w} ${7*cell}">${o}</svg>`})();
@@ -423,7 +412,7 @@ function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
   const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
 $("startB").onclick=()=>{$("startOv").hidden=true;$("modeOv").hidden=false};$("modeX").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
-document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);start()});$("againB").onclick=start;$("homeB").onclick=home;
+document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);phTut("pang-tut",{"goal": "같은 모양 3개가 붙으면 팡! 연달아 터지면 콤보.<br>맨 위까지 쌓이면 게임 끝!", "touch": [["← 밀기 →", "옮기기"], ["탭", "돌리기"], ["↓ 천천히 밀기", "천천히 내리기"], ["↓ 튕기기", "바로 내리기"]], "pc": [["← →", "옮기기"], ["↑ / X / Z", "돌리기"], ["↓", "천천히 내리기"], ["SPACE", "바로 내리기"]]},start)});$("againB").onclick=start;$("homeB").onclick=home;
 $("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("quitB").onclick=()=>{$("pauseOv").hidden=true;gameOver()};
 $("restartB").onclick=()=>{if(state==="play"||state==="pause"||state==="over")start()};
@@ -434,5 +423,5 @@ addEventListener("resize",layout);
 hud();layout();requestAnimationFrame(tick);setTimeout(layout,300);
 </script>
 
-</body>
+<script src="../games/ph.js?v=1"></script></body>
 </html>
