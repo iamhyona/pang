@@ -202,7 +202,7 @@ const PIX={
  spk:['...1....','..11..1.','1111.1.1','1111.1.1','1111.1.1','1111.1.1','..11..1.','...1....'],
  note:['....11..','....111.','....1.11','....1...','....1...','.1111...','11111...','.111....']};
 document.querySelectorAll('[data-ic]').forEach(el=>{const m=PIX[el.dataset.ic];let r='';m.forEach((row,y)=>[...row].forEach((v,x)=>{if(v==='1')r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`}));el.innerHTML=`<svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor">${r}</svg>`});
-const COLS=6,ROWS=13,HID=1;
+const COLS=7,ROWS=15,HID=1; /* 가로 7칸 */
 const CP=[0,0,8,16,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,512];
 const GB=n=>n<5?0:n>=11?10:n-3;
 const CB=[0,0,3,6,12,24,36,48];
@@ -224,7 +224,7 @@ function layout(){
 }
 const grid=v=>Array.from({length:ROWS},()=>Array(COLS).fill(v));
 function reset(){G=grid(0);LT=grid(-1e9);PH=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>Math.random()*6.28));score=0;maxChain=0;stage=1;popped=0;anim=null;parts=[];rings=[];floats=[];queue=[[rnd(),rnd()],[rnd(),rnd()]];spawn();hud()}
-function spawn(){if(vsGb>0){let n=Math.min(vsGb,30);vsGb-=n;const cols=[...Array(COLS).keys()];while(n>0){let placed=false;for(const x of cols.sort(()=>Math.random()-.5)){if(n<=0)break;for(let y=ROWS-1;y>=HID;y--){if(!G[y][x]){G[y][x]=9;LT[y][x]=NOW;n--;placed=true;break}}}if(!placed)break}} /* 대전: 받은 방해 블록 떨어뜨리기 */const p=queue.shift();queue.push([rnd(),rnd()]);cur={x:2,y:1,r:0,ra:0,c:p,born:NOW};vis={x:2,y:0,a:0};lockT=0;lockMoves=0;fallAcc=0;if(G[1][2]){gameOver();return}drawNext()}
+function spawn(){if(vsGb>0){const n=Math.min(vsGb,ROWS-HID);vsGb-=n;let over=false;for(let k=0;k<n;k++){if(G[HID].some(v=>v))over=true;G.shift();LT.shift();PH.shift();G.push(Array(COLS).fill(9));LT.push(Array(COLS).fill(NOW));PH.push(Array.from({length:COLS},()=>Math.random()*6.28))}G[0].fill(0);shake=8;shakeA=1;if(over){gameOver();return}} /* 대전: 받은 만큼 바닥에서 방해 줄이 올라옴 */const p=queue.shift();queue.push([rnd(),rnd()]);cur={x:3,y:1,r:0,ra:0,c:p,born:NOW};vis={x:3,y:0,a:0};lockT=0;lockMoves=0;fallAcc=0;if(G[1][3]){gameOver();return}drawNext()}
 const cells=p=>{const d=DIRS[p.r];return [[p.x,p.y,p.c[0]],[p.x+d[0],p.y+d[1],p.c[1]]]};
 const free=(x,y)=>x>=0&&x<COLS&&y<ROWS&&(y<0||!G[y][x]);
 const fits=p=>cells(p).every(([x,y])=>free(x,y));
@@ -240,15 +240,15 @@ function dropCells(){const mv=[];for(let x=0;x<COLS;x++){let w=ROWS-1;for(let y=
 function groups(){const seen=grid(false),out=[];
   for(let y=HID;y<ROWS;y++)for(let x=0;x<COLS;x++){const c=G[y][x];if(!c||c===9||seen[y][x])continue;const st=[[x,y]],g=[];seen[y][x]=true;
     while(st.length){const [a,b]=st.pop();g.push([a,b]);for(const [dx,dy] of DIRS){const u=a+dx,v=b+dy;if(u>=0&&u<COLS&&v>=HID&&v<ROWS&&!seen[v][u]&&G[v][u]===c){seen[v][u]=true;st.push([u,v])}}}
-    if(g.length>=3)out.push({c,g})}return out} /* 같은 모양 3개면 팡 */
+    if(g.length>=4)out.push({c,g})}return out} /* 같은 모양 4개면 팡 */
 const POPA=230,POPB=330;
 function resolve(chain){
   const mv=dropCells();
   const after=()=>{const gs=groups();
-    if(!gs.length){if(window.PHVS&&PHVS.active&&vsAtk>=100){let n=Math.floor(vsAtk/100);const c=Math.min(vsGb,n);vsGb-=c;n-=c;if(n>0)PHVS.send({t:"gb",n})}vsAtk=0; /* 대전: 연쇄 점수로 방해 블록 보내기 (받을 것과 상쇄) */if(chain>1&&G.every(r=>r.every(v=>!v))){const ac=Math.round(2100*mm().mul);score+=ac;showChain("ALL CLEAR","+"+ac);lvl()}hud();if(state==="play"||state==="pause")spawn();return}
+    if(!gs.length){if(window.PHVS&&PHVS.active&&vsAtk>=6){let n=Math.floor(vsAtk/6);vsAtk-=n*6;const c=Math.min(vsGb,n);vsGb-=c;n-=c;if(n>0){PHVS.send({t:"gb",n});showChain("ATTACK!","상대에게 "+n+"줄")}} /* 대전: 터뜨린 만큼(6개당 1줄, 연쇄면 더 많이) 상대 바닥에 줄 올리기 · 받을 줄과 상쇄 */if(chain>1&&G.every(r=>r.every(v=>!v))){const ac=Math.round(2100*mm().mul);score+=ac;showChain("ALL CLEAR","+"+ac);lvl()}hud();if(state==="play"||state==="pause")spawn();return}
     const n=gs.reduce((a,g)=>a+g.g.length,0),colors=new Set(gs.map(g=>g.c)).size;
     const bonus=Math.max(1,Math.min(999,(CP[Math.min(chain,CP.length-1)]||0)+gs.reduce((a,g)=>a+GB(g.g.length),0)+CB[colors]));
-    const gain=Math.round(10*n*bonus*mm().mul);vsAtk+=gain;score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
+    const gain=Math.round(10*n*bonus*mm().mul);vsAtk+=n*(chain>1?chain:1);score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
     const ns=1+Math.floor(popped/40);if(ns>stage){stage=ns;lvl();if(chain<2)showChain("STAGE "+pad(stage,3),"SPEED UP")}
     if(chain>=2)showChain(chain+" COMBO!","COMBO BONUS");
     anim={type:"pop",t:0,dur:POPA+POPB,chain,gain,gs,cells:gs.flatMap(g=>g.g),burst:false,done:()=>{for(const [x,y] of anim.cells)G[y][x]=0;for(const [x,y] of anim.cells)for(const [dx,dy] of DIRS){const u=x+dx,v=y+dy;if(G[v]&&G[v][u]===9)G[v][u]=0} /* 옆에서 터지면 방해 블록도 사라짐 */anim=null;hud();resolve(chain+1)}}};
@@ -415,7 +415,7 @@ $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)retu
   const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
 PHVS.init({id:'pang',name:()=>store.get("pang-name")||"",setName:n=>store.set("pang-name",n),score:()=>score,
  start:()=>{mode="normal";vsGb=0;vsAtk=0;["startOv","modeOv","overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);start();showChain("VS START!","연쇄로 방해 블록 보내기")},
- data:d=>{if(d.t==="gb"&&state==="play"){vsGb+=d.n;showChain("+"+d.n+" 방해 블록","조심!")}},
+ data:d=>{if(d.t==="gb"&&state==="play"){vsGb+=d.n;showChain("WARNING",d.n+"줄 올라와요!")}},
  stop:()=>{state="over";cur=null;bgmStop()},leave:()=>home()});
 $("vsB").onclick=()=>{unlockAudio();PHVS.menu()};
 $("startB").onclick=()=>{$("startOv").hidden=true;$("modeOv").hidden=false};$("modeX").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
