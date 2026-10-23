@@ -344,7 +344,6 @@ function cellDraw(x,y,v,t,px,py){const lt=(t-LT[y][x])/1000,ph=PH[y][x];let w=Ma
   sprite(v,moodAt(x,y,t),px,py,CS,sx,sy)}
 function draw(){const c=cx,t=NOW||performance.now();c.setTransform(DPR,0,0,DPR,0,0);const w=CS*COLS,h=CS*(ROWS-HID);c.clearRect(0,0,w,h);
   c.fillStyle="rgba(255,255,255,.09)";for(let y=0;y<ROWS-HID;y++)for(let x=0;x<COLS;x++){c.beginPath();c.arc(x*CS+CS/2,y*CS+CS/2,1.4,0,7);c.fill()}
-  c.strokeStyle="rgba(255,90,110,.35)";c.lineWidth=1.5;c.setLineDash([3,3]);c.beginPath();c.moveTo(2*CS+4,2);c.lineTo(3*CS-4,2);c.stroke();c.setLineDash([]);
   if(!G)return;
   const hide=new Set(),pop=new Set();
   if(anim&&anim.type==="fall")for(const m of anim.moves)hide.add(m.x+","+m.to);
