@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="description" content="박현아가 심심해서 만든 비상업적 용도 연쇄 퍼즐 게임. 같은 모양 넷이면 팡!">
+<meta name="description" content="박현아가 심심해서 만든 비상업적 용도 연쇄 퍼즐 게임. 같은 모양 셋이면 팡!">
 <meta property="og:type" content="website">
-<meta property="og:title" content="팡">
-<meta property="og:description" content="박현아가 심심해서 만든 비상업적 용도 연쇄 퍼즐 게임. 같은 모양 넷이면 팡!">
+<meta property="og:title" content="팡팡">
+<meta property="og:description" content="박현아가 심심해서 만든 비상업적 용도 연쇄 퍼즐 게임. 같은 모양 셋이면 팡!">
 <meta property="og:image" content="https://iamhyona.github.io/pang/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -17,9 +17,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b0b0f">
-<meta name="apple-mobile-web-app-title" content="팡">
+<meta name="apple-mobile-web-app-title" content="팡팡">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>팡</title>
+<title>팡팡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:"NeoDunggeunmo";src:url(https://cdn.jsdelivr.net/npm/@kfonts/neodgm@0.5.0/neodgm.woff2) format("woff2");font-display:block}
@@ -106,8 +106,9 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .pix svg{width:100%;height:100%;display:block}
 .pix[data-ic=flag]{color:var(--sub);width:12px;height:12px}
 .pix[data-ic=bolt]{color:var(--gold);width:12px;height:12px}
+#bgmB.off .pix,#sfxB.off .pix{opacity:.3}
 </style>
-<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1792699446";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}}).catch(function(){})}catch(e){}})();</script>
+<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1792736054";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}}).catch(function(){})}catch(e){}})();</script>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>/* 카톡 등 인앱 브라우저: 실제 보이는 높이로 화면 맞춤 */(function(){var d=document.documentElement;function f(){var h=window.innerHeight,v=window.visualViewport;if(v&&v.height>0)h=Math.min(h,Math.round(v.height));d.style.setProperty('--app-h',h+'px');if(typeof layout==='function')requestAnimationFrame(function(){layout()})}f();addEventListener('resize',f);if(window.visualViewport)visualViewport.addEventListener('resize',f);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(f);addEventListener('orientationchange',function(){setTimeout(f,300)});addEventListener('pageshow',f);setTimeout(f,250);setTimeout(f,1000)})();</script>
 <style>html,body{height:var(--app-h,100%)!important}@media (max-width:519px){.ph{bottom:auto!important;height:var(--app-h,100%)!important}}</style>
@@ -132,6 +133,8 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
         <div class="bx"><i class="pix" data-ic="bolt"></i><b id="ch">00</b></div>
         <button class="sb" id="pauseB" aria-label="일시정지"><i class="pix" data-ic="pause"></i></button>
         <button class="sb" id="restartB" aria-label="다시 시작"><i class="pix" data-ic="restart"></i></button>
+        <button class="sb" id="bgmB" aria-label="배경음악"><i class="pix" data-ic="note"></i></button>
+        <button class="sb" id="sfxB" aria-label="효과음"><i class="pix" data-ic="spk"></i></button>
       </div>
       <div class="bw"><div class="well" id="well"><canvas id="cv"></canvas></div><div class="chain" id="chain"><b id="chainT">2 COMBO!</b><span>COMBO BONUS</span></div></div>
     </div>
@@ -146,7 +149,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
       <i class="sp" style="flex:86 1 0"></i>
       <div class="keys"><kbd>← 밀기 →</kbd><span>이동</span><kbd>탭</kbd><span>돌리기</span><kbd>↓ 천천히 밀기</kbd><span>천천히</span><kbd>↓ 튕기기</kbd><span>바로 내리기</span></div>
       <i class="sp" style="flex:44 1 0"></i>
-      <div class="credit">이 게임은 서울 마포구에 사는 박현아가 만든<br>비상업용 게임이에요. 같은 모양 넷이면 팡!</div>
+      <div class="credit">이 게임은 서울 마포구에 사는 박현아가 만든<br>비상업용 게임이에요. 같은 모양 셋이면 팡!</div>
     </div>
     <div class="ov" id="pauseOv" hidden><div class="paused">PAUSE</div><button class="ob" id="resumeB">CONTINUE</button><button class="ob red" id="quitB">GIVE UP</button></div>
     <div class="ov" id="overOv" hidden>
@@ -196,7 +199,7 @@ for(let c=1;c<=7;c++)for(const m of ["","b","o","x"]){const im=new Image();im.on
 const RBC=['#e8284f','#f26a0d','#f2b000','#10b870','#00a8e0','#2f6bf0','#8a3cf0'];
 $("rb1").innerHTML=$("rb2").innerHTML=RBC.flatMap(c=>Array(6).fill(`<i style="background:${c}"></i>`)).join("");
 (function logo(){const L={P:"11110100011000111110100001000010000",A:"01110100011000111111100011000110001",N:"10001110011010110011100011000110001",G:"01111100001000010111100011000101111"};
-  const cell=12,w="PANG".length*6*cell-cell;let o="";[..."PANG"].forEach((ch,i)=>{const g=L[ch];for(let y=0;y<7;y++)for(let x=0;x<5;x++){const on=g[y*5+x]==="1";o+=`<circle cx="${i*6*cell+x*cell+cell/2}" cy="${y*cell+cell/2}" r="${cell*.38}" fill="${on?RBC[i*2%7]:"rgba(255,255,255,.06)"}"/>`}});
+  const W="PANGPANG",cell=9,w=W.length*6*cell-cell;let o="";[...W].forEach((ch,i)=>{const g=L[ch];for(let y=0;y<7;y++)for(let x=0;x<5;x++){const on=g[y*5+x]==="1";o+=`<circle cx="${i*6*cell+x*cell+cell/2}" cy="${y*cell+cell/2}" r="${cell*.38}" fill="${on?RBC[i*2%7]:"rgba(255,255,255,.06)"}"/>`}});
   $("logo").innerHTML=`<svg class="logo" width="${w}" height="${7*cell}" viewBox="0 0 ${w} ${7*cell}">${o}</svg>`})();
 $("show").innerHTML=[1,2,3,4,5,6,7].map(c=>`<img alt="" src="${svgURL(pieceSVG(c))}">`).join("");
 /* ---------- game ---------- */
@@ -204,7 +207,9 @@ const PIX={
  flag:['1111....','111111..','1111111.','111111..','1.......','1.......','1.......','1.......'],
  bolt:['....111.','...111..','..111...','.111111.','...111..','..111...','.111....','.1......'],
  pause:['........','.11..11.','.11..11.','.11..11.','.11..11.','.11..11.','.11..11.','........'],
- restart:['..11111.','.1....11','1....111','1.......','1.......','1......1','.1....1.','..1111..']};
+ restart:['..11111.','.1....11','1....111','1.......','1.......','1......1','.1....1.','..1111..'],
+ spk:['...1....','..11..1.','1111.1.1','1111.1.1','1111.1.1','1111.1.1','..11..1.','...1....'],
+ note:['....11..','....111.','....1.11','....1...','....1...','.1111...','11111...','.111....']};
 document.querySelectorAll('[data-ic]').forEach(el=>{const m=PIX[el.dataset.ic];let r='';m.forEach((row,y)=>[...row].forEach((v,x)=>{if(v==='1')r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`}));el.innerHTML=`<svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor">${r}</svg>`});
 const COLS=6,ROWS=13,HID=1;
 const CP=[0,0,8,16,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,512];
@@ -234,26 +239,26 @@ const free=(x,y)=>x>=0&&x<COLS&&y<ROWS&&(y<0||!G[y][x]);
 const fits=p=>cells(p).every(([x,y])=>free(x,y));
 function tryMove(dx,dy){const n={...cur,x:cur.x+dx,y:cur.y+dy};if(fits(n)){cur=n;return true}return false}
 function bumpLock(){if(lockT>0&&lockMoves<12){lockT=0;lockMoves++}}
-function rotate(dir){const n={...cur,r:(cur.r+dir+4)%4,ra:cur.ra+dir*90};if(fits(n)){cur=n;bumpLock();return}
+function rotate(dir){const n={...cur,r:(cur.r+dir+4)%4,ra:cur.ra+dir*90};if(fits(n)){cur=n;bumpLock();rotS();return}
   const d=DIRS[n.r],k={...n,x:n.x-d[0],y:n.y-d[1]};if(fits(k)){cur=k;bumpLock();return}
   const f={...cur,r:(cur.r+2)%4,ra:cur.ra+dir*180},fd=DIRS[f.r],f2={...f,x:f.x-fd[0],y:f.y-fd[1]};if(fits(f)){cur=f;bumpLock()}else if(fits(f2)){cur=f2;bumpLock()}}
 const grounded=()=>!fits({...cur,y:cur.y+1});
-function hardDrop(){let n=0;while(tryMove(0,1))n++;score+=n*2;fallAcc=0;cur.drop=true}
+function hardDrop(){let n=0;while(tryMove(0,1))n++;score+=n*2;fallAcc=0;cur.drop=true;whoosh()}
 function lock(){for(const [x,y,c] of cells(cur))if(y>=0){G[y][x]=c;LT[y][x]=NOW}cur=null;vis=null;resolve(1)}
 function dropCells(){const mv=[];for(let x=0;x<COLS;x++){let w=ROWS-1;for(let y=ROWS-1;y>=0;y--)if(G[y][x]){if(w!==y){mv.push({x,from:y,to:w,c:G[y][x],d:Math.sqrt(w-y)});G[w][x]=G[y][x];G[y][x]=0;LT[w][x]=1e12}w--}}return mv}
 function groups(){const seen=grid(false),out=[];
   for(let y=HID;y<ROWS;y++)for(let x=0;x<COLS;x++){const c=G[y][x];if(!c||seen[y][x])continue;const st=[[x,y]],g=[];seen[y][x]=true;
     while(st.length){const [a,b]=st.pop();g.push([a,b]);for(const [dx,dy] of DIRS){const u=a+dx,v=b+dy;if(u>=0&&u<COLS&&v>=HID&&v<ROWS&&!seen[v][u]&&G[v][u]===c){seen[v][u]=true;st.push([u,v])}}}
-    if(g.length>=4)out.push({c,g})}return out}
+    if(g.length>=3)out.push({c,g})}return out} /* 같은 모양 3개면 팡 */
 const POPA=230,POPB=330;
 function resolve(chain){
   const mv=dropCells();
   const after=()=>{const gs=groups();
-    if(!gs.length){if(chain>1&&G.every(r=>r.every(v=>!v))){const ac=Math.round(2100*mm().mul);score+=ac;showChain("ALL CLEAR","+"+ac)}hud();if(state==="play"||state==="pause")spawn();return}
+    if(!gs.length){if(chain>1&&G.every(r=>r.every(v=>!v))){const ac=Math.round(2100*mm().mul);score+=ac;showChain("ALL CLEAR","+"+ac);lvl()}hud();if(state==="play"||state==="pause")spawn();return}
     const n=gs.reduce((a,g)=>a+g.g.length,0),colors=new Set(gs.map(g=>g.c)).size;
     const bonus=Math.max(1,Math.min(999,(CP[Math.min(chain,CP.length-1)]||0)+gs.reduce((a,g)=>a+GB(g.g.length),0)+CB[colors]));
     const gain=Math.round(10*n*bonus*mm().mul);score+=gain;popped+=n;if(chain>maxChain)maxChain=chain;
-    const ns=1+Math.floor(popped/40);if(ns>stage){stage=ns;if(chain<2)showChain("STAGE "+pad(stage,3),"SPEED UP")}
+    const ns=1+Math.floor(popped/40);if(ns>stage){stage=ns;lvl();if(chain<2)showChain("STAGE "+pad(stage,3),"SPEED UP")}
     if(chain>=2)showChain(chain+" COMBO!","COMBO BONUS");
     anim={type:"pop",t:0,dur:POPA+POPB,chain,gain,gs,cells:gs.flatMap(g=>g.g),burst:false,done:()=>{for(const [x,y] of anim.cells)G[y][x]=0;anim=null;hud();resolve(chain+1)}}};
   if(mv.length){const dur=Math.max(...mv.map(m=>110+m.d*85));anim={type:"fall",t:0,dur:dur+20,moves:mv,done:()=>{for(const m of mv)if(LT[m.to][m.x]>NOW)LT[m.to][m.x]=NOW;anim=null;after()}}}else after()}
@@ -267,13 +272,57 @@ function burst(a){
   const c0=a.gs[0].g;let mx=0,my=0;for(const [x,y] of c0){mx+=x;my+=y}mx=mx/c0.length*CS+CS/2;my=(my/c0.length-HID)*CS+CS/2;
   floats.push({x:mx,y:my,t:0,life:1,txt:"+"+a.gain.toLocaleString(),big:a.chain>=2});
   if(ch>=2)flashA=Math.min(.55,.18+ch*.09);
-  shake=Math.min(14,2+a.chain*2.5);shakeA=1;sfx(a.chain)}
+  shake=Math.min(14,2+a.chain*2.5);shakeA=1;sfx(a.chain);if(a.chain>=3)boom(a.chain)}
 function showChain(a,b){const e=$("chain");$("chainT").textContent=a;e.querySelector("span").textContent=b;e.classList.remove("on");void e.offsetWidth;e.classList.add("on")}
 let AC=null;
-function sfx(chain){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;
-  const o=AC.createOscillator(),g=AC.createGain();o.type="square";const f=440*Math.pow(2,Math.min(chain-1,12)/6);o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.8,t+.09);g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(g).connect(AC.destination);o.start();o.stop(t+.24);
-  const n=AC.createBufferSource(),b=AC.createBuffer(1,AC.sampleRate*.12,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);n.buffer=b;const ng=AC.createGain();ng.gain.value=.05;n.connect(ng).connect(AC.destination);n.start(t)}catch(e){}}
-function plop(){try{if(!AC)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.setValueAtTime(320,t);o.frequency.exponentialRampToValueAtTime(140,t+.08);g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.connect(g).connect(AC.destination);o.start();o.stop(t+.12)}catch(e){}}
+/* ---------- 소리 (스위치팡과 같은 방식: 아이폰 무음 모드에서도 재생) ---------- */
+function silentWav(){const n=800,b=new ArrayBuffer(44+n),v=new DataView(b),w=(o,t)=>[...t].forEach((ch,i)=>v.setUint8(o+i,ch.charCodeAt(0)));w(0,"RIFF");v.setUint32(4,36+n,true);w(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,"data");v.setUint32(40,n,true);for(let i=0;i<n;i++)v.setUint8(44+i,128);return new Blob([b],{type:"audio/wav"})}
+function unlockAudio(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume();const b=AC.createBuffer(1,1,22050),s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){}if(!window._sa){try{const a=new Audio(URL.createObjectURL(silentWav()));a.loop=true;a.setAttribute("playsinline","");a.play().catch(()=>{});window._sa=a}catch(e){}}}
+addEventListener("pointerdown",unlockAudio,true);addEventListener("touchend",unlockAudio,true);addEventListener("visibilitychange",()=>{if(!document.hidden&&AC)AC.resume()});
+/* 효과음 (부드러운 어택 + 리미터, 고음 제한) */
+let SFXB=null,sfxOn=(store.get("pang-sfx")??"1")!=="0";
+function sfxBus(){if(!AC)return null;if(!SFXB||SFXB._ac!==AC){const c=AC.createDynamicsCompressor();c.threshold.value=-14;c.knee.value=10;c.ratio.value=8;c.attack.value=.002;c.release.value=.12;
+  const g=AC.createGain();g.gain.value=.9;g.connect(c).connect(AC.destination);g._ac=AC;SFXB=g}return SFXB}
+function tone(type,f0,f1,dur,vol,del){try{if(!AC||!sfxOn)return;vol*=3;const t=AC.currentTime+(del||0),o=AC.createOscillator(),g=AC.createGain();o.type=type;
+  o.frequency.setValueAtTime(Math.min(f0,2200),t);o.frequency.exponentialRampToValueAtTime(Math.min(f1,2200),t+dur*.8);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0008,t+dur);o.connect(g).connect(sfxBus());o.start(t);o.stop(t+dur+.03)}catch(e){}}
+function sfx(ch){const f=520*Math.pow(2,Math.min(ch-1,7)/8);tone("sine",f*.55,f*1.3,.1,.035);tone("sine",f*1.5,f*1.5,.16,.014,.05);if(ch>=2)tone("sine",f*2,f*2,.2,.009,.1)}
+const boom=lv=>{tone("sine",150,60,.3,.05);tone("sine",700,1000,.14,.012,.05);if(lv>=3)for(let i=0;i<5;i++)tone("sine",660*Math.pow(1.2,i),660*Math.pow(1.2,i),.2,.01,.07*i)},lvl=()=>{[523,659,784,1047].forEach((f,i)=>tone("triangle",f,f,.18,.018,i*.1))};
+const plop=()=>tone("sine",320,140,.1,.04),whoosh=()=>tone("triangle",500,800,.08,.035),bump=()=>tone("triangle",180,120,.1,.045);
+const rotS=()=>tone("triangle",520,660,.05,.02);
+/* ---------- BGM (은은한 생성 음악) ---------- */
+const BGM_SONGS={
+ a:{name:"팡팡 행진",bpm:128,spb:8,tr:[
+  {i:"mal",v:.5,s:"C5 F5 . A5 G5 . F5 .|D5 . F5 . D5 C5 . .|C5 F5 . A5 C6 . A5 G5|G5 - . . . . . .|A5 G5 . F5 E5 . F5 G5|A#5 . F5 . D5 . . .|D5 E5 . F5 G5 . E5 C5|F5 - . . . . . ."},
+  {i:"pls",v:.55,s:"F2 . . F3 C3 . F2 .|A#2 . . A#3 F3 . A#2 .|F2 . . F3 C3 . F2 .|C3 . . C4 G3 . C3 .|D3 . . D4 A3 . D3 .|A#2 . . A#3 F3 . A#2 .|C3 . . C4 G3 . C3 .|F2 . . F3 C3 . . ."},
+  {i:"box",v:.07,s:". . A5 . . . C6 .|. . F5 . . . D5 .|. . A5 . . . C6 .|. . G5 . . . E5 .|. . F5 . . . A5 .|. . D5 . . . F5 .|. . E5 . . . G5 .|. . A5 . . . C6 ."},
+  {i:"shk",v:.10,s:". x . x . x . x|. x . x . x . x|. x . x . x . x|. x . x . x . x|. x . x . x . x|. x . x . x . x|. x . x . x . x|. x . x . x x x"}]}
+};
+const BGM_NN={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+function bgmParse(song){const ev=[];let total=0;song.tr.forEach(tr=>{const toks=tr.s.split("|").flatMap(b=>b.trim().split(/\s+/));total=toks.length;let last=null;
+  toks.forEach((k,i)=>{if(k==="-"){if(last)last.len++;return}last=null;if(k===".")return;if(k==="x"){ev.push({st:i,i:tr.i,v:tr.v,m:0,len:1});return}
+   const m=k.match(/^([A-G])(#?)(\d)$/);const e={st:i,i:tr.i,v:tr.v,m:12*(+m[3]+1)+BGM_NN[m[1]]+(m[2]?1:0),len:1};ev.push(e);last=e})});
+  ev.sort((a,b)=>a.st-b.st);return {ev,total,step:60/song.bpm/2}}
+let BGM_NOISE=null;
+function bgmVoice(ac,dst,e,t,step){const f=440*Math.pow(2,(e.m-69)/12),d=e.len*step,v=e.v;
+  const env=(g,a,peak,dec)=>{g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0004,t+a+dec)};
+  const osc=(type,fr,peak,a,dec,to)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=fr;env(g,a,peak,dec);o.connect(g).connect(to||dst);o.start(t);o.stop(t+a+dec+.05)};
+  if(e.i==="mal"){osc("sine",f,v,.004,.35+Math.min(d,.3));osc("sine",f*4,v*.07,.003,.05)}
+  else if(e.i==="box"){osc("sine",f,v,.003,1.1);osc("sine",f*3,v*.12,.002,.25);osc("sine",f*2,v*.08,.002,.5)}
+  else if(e.i==="pls"){osc("triangle",f,v,.006,.18+Math.min(d,.3)*.6);osc("sine",f*2,v*.25,.004,.08)}
+  else if(e.i==="tri"){osc("triangle",f,v,.006,Math.max(.12,d*.8))}
+  else if(e.i==="chip"){const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2200;lp.connect(dst);
+    const o=ac.createOscillator(),g=ac.createGain();o.type="square";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.006);g.gain.setValueAtTime(v*.8,t+Math.max(.03,d*.75));g.gain.exponentialRampToValueAtTime(.0004,t+d*.75+.12);
+    o.connect(g).connect(lp);o.start(t);o.stop(t+d+.2)}
+  else if(e.i==="shk"){if(!BGM_NOISE||BGM_NOISE.sampleRate!==ac.sampleRate){const n=ac.sampleRate*.1|0;BGM_NOISE=ac.createBuffer(1,n,ac.sampleRate);const c=BGM_NOISE.getChannelData(0);for(let k=0;k<n;k++)c[k]=Math.random()*2-1}
+    const s=ac.createBufferSource(),hp=ac.createBiquadFilter(),g=ac.createGain();s.buffer=BGM_NOISE;hp.type="highpass";hp.frequency.value=7000;env(g,.002,v,.045);s.connect(hp).connect(g).connect(dst);s.start(t);s.stop(t+.08)}}
+let bgmOn=(store.get("pang-bgm")??"1")!=="0",bgmG=null,bgmT=null,bgmN=0,bgmAt=0;const BGM_P=bgmParse(BGM_SONGS.a);
+function bgmSched(){if(!AC||!bgmG)return;const P=BGM_P;while(bgmAt<AC.currentTime+.5){const st=bgmN%P.total;for(const e of P.ev)if(e.st===st)bgmVoice(AC,bgmG,e,bgmAt,P.step);bgmN++;bgmAt+=P.step}}
+function bgmPlay(){if(!bgmOn)return;try{unlockAudio();if(!AC)return;if(!bgmG||bgmG._ac!==AC){bgmG=AC.createGain();bgmG.gain.value=0;bgmG._ac=AC;const lp=AC.createBiquadFilter();lp.type="lowpass";lp.frequency.value=5000;const bv=AC.createGain();bv.gain.value=.6;/* 배경음악 40% 줄임 */bgmG.connect(lp).connect(bv).connect(AC.destination)}
+  bgmG.gain.cancelScheduledValues(AC.currentTime);bgmG.gain.setValueAtTime(bgmG.gain.value,AC.currentTime);bgmG.gain.linearRampToValueAtTime(.12,AC.currentTime+.8);
+  if(!bgmT){bgmAt=AC.currentTime+.08;bgmT=setInterval(bgmSched,100);bgmSched()}}catch(e){}}
+function bgmStop(){try{if(bgmT){clearInterval(bgmT);bgmT=null}if(bgmG&&AC){bgmG.gain.cancelScheduledValues(AC.currentTime);bgmG.gain.setValueAtTime(bgmG.gain.value,AC.currentTime);bgmG.gain.linearRampToValueAtTime(0,AC.currentTime+.3)}}catch(e){}}
+function bgmBtn(){$("bgmB").classList.toggle("off",!bgmOn);$("sfxB").classList.toggle("off",!sfxOn)}
 let mode='normal';const MODES={easy:{spd:1.35,mul:.5},normal:{spd:1,mul:1},hard:{spd:.72,mul:2}};const mm=()=>MODES[mode]||MODES.normal;
 const speed=()=>Math.max(70,Math.round((800-(stage-1)*70)*mm().spd));
 const ease=(v,t,dt,ms)=>v+(t-v)*(1-Math.exp(-dt/ms));
@@ -361,12 +410,12 @@ scr.addEventListener("pointerup",e=>{if(!sw)return;const dy=e.clientY-sw.y,dt=pe
   if(dy>CS*1.4&&(dt<220||sw.vy>.9))act("H");else if(!sw.moved&&Math.abs(dy)<CS*.5&&dt<350)act("CW");sw=null});
 scr.addEventListener("pointercancel",()=>{sw=null;soft=false});
 /* ---------- flow ---------- */
-function start(){["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
-function pause(on){if(!G||state==="over")return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0}
-function gameOver(){state="over";cur=null;const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
+function start(){["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();unlockAudio();bgmPlay()}
+function pause(on){if(!G||state==="over")return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0;if(on)bgmStop();else bgmPlay()}
+function gameOver(){state="over";cur=null;bgmStop();[523,415,330,262].forEach((f,i)=>tone("triangle",f,f*.98,.22,.02,i*.13));const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
   $("oS").textContent=score.toLocaleString();$("oC").textContent=maxChain;$("oL").textContent=stage;
   $("nmI").value=store.get("pang-name")||"";$("nmF").classList.toggle("saved",score<=0);mine=null;rk($("rkL"));setTimeout(()=>{$("overOv").hidden=false},600);hud()}
-function home(){state=null;G=null;cur=null;vis=null;queue=null;anim=null;parts=[];rings=[];floats=[];["overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);$("startOv").hidden=false;score=0;maxChain=0;stage=1;hud();draw();drawNext()}
+function home(){state=null;bgmStop();G=null;cur=null;vis=null;queue=null;anim=null;parts=[];rings=[];floats=[];["overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);$("startOv").hidden=false;score=0;maxChain=0;stage=1;hud();draw();drawNext()}
 const RK="pang-rank";let mine=null;
 const rkLoad=()=>{try{return JSON.parse(store.get(RK)||"[]")}catch(e){return[]}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -378,6 +427,8 @@ document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.d
 $("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("quitB").onclick=()=>{$("pauseOv").hidden=true;gameOver()};
 $("restartB").onclick=()=>{if(state==="play"||state==="pause"||state==="over")start()};
+$("bgmB").onclick=()=>{bgmOn=!bgmOn;store.set("pang-bgm",bgmOn?"1":"0");bgmBtn();if(bgmOn&&state==="play")bgmPlay();else bgmStop()};bgmBtn();
+$("sfxB").onclick=()=>{sfxOn=!sfxOn;store.set("pang-sfx",sfxOn?"1":"0");bgmBtn();unlockAudio();if(sfxOn)tone("sine",660,880,.1,.03)};
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state==="play")pause(true)});
 addEventListener("resize",layout);
 hud();layout();requestAnimationFrame(tick);setTimeout(layout,300);
