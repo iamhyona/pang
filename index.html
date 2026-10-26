@@ -110,7 +110,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .pix[data-ic=bolt]{color:var(--gold);width:12px;height:12px}
 #bgmB.off .pix,#sfxB.off .pix{opacity:.3}
 </style>
-<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1792839000";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
+<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1793001824";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>/* 카톡 등 인앱 브라우저: 실제 보이는 높이로 화면 맞춤 */(function(){var d=document.documentElement;function f(){var h=window.innerHeight,v=window.visualViewport;if(v&&v.height>0)h=Math.min(h,Math.round(v.height));d.style.setProperty('--app-h',h+'px');if(typeof layout==='function')requestAnimationFrame(function(){layout()})}f();addEventListener('resize',f);if(window.visualViewport)visualViewport.addEventListener('resize',f);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(f);addEventListener('orientationchange',function(){setTimeout(f,300)});addEventListener('pageshow',f);setTimeout(f,250);setTimeout(f,1000)})();</script>
 <style>html,body{height:var(--app-h,100%)!important}@media (max-width:519px){.ph{bottom:auto!important;height:var(--app-h,100%)!important}}</style>
@@ -159,7 +159,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
       <button class="ob mode master" data-m="master">MASTER<small>SCORE ×3 · 더 빠르게</small></button>
       <button class="mx" id="modeX" aria-label="닫기">✕</button>
     </div>
-    <div class="ov" id="rankOv" hidden><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="ob" id="rankClose">CLOSE</button></div>
+    <div class="ov" id="rankOv" hidden><div id="rkBar"></div><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="ob" id="rankClose">CLOSE</button></div>
   </div>
 </div>
 <script>
@@ -420,14 +420,17 @@ function start(){["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i
 function pause(on){if(!G||state==="over")return;if(on&&window.PHVS&&PHVS.active)return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0;if(on)bgmStop();else bgmPlay()}
 function gameOver(){if(window.PHVS&&PHVS.active){state="over";cur=null;bgmStop();PHVS.over(score,true);return}state="over";cur=null;bgmStop();[523,415,330,262].forEach((f,i)=>tone("triangle",f,f*.98,.22,.02,i*.13));const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
   $("oS").textContent=score.toLocaleString();$("oC").textContent=maxChain;$("oL").textContent=stage;
-  $("nmI").value=store.get("pang-name")||"";$("nmF").classList.toggle("saved",score<=0);mine=null;rk($("rkL"));setTimeout(()=>{$("overOv").hidden=false},600);hud()}
+  $("nmI").value=store.get("pang-name")||"";$("nmF").classList.toggle("saved",score<=0);mine=null;RSEL={diff:mode,ver:window.phRk?phRk.vers("pang")[0].id:null};rk($("rkL"));setTimeout(()=>{$("overOv").hidden=false},600);hud()}
 function home(){state=null;bgmStop();G=null;cur=null;vis=null;queue=null;anim=null;parts=[];rings=[];floats=[];["overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);$("startOv").hidden=false;score=0;maxChain=0;stage=1;hud();draw();drawNext()}
 const RK="pang-rank";let mine=null;
 const rkLoad=()=>{try{return JSON.parse(store.get(RK)||"[]")}catch(e){return[]}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function rk(el){const l=rkLoad().slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}${r.m&&window.phLv?phLv(r.m.toUpperCase()):""}<small>${r.c} COMBO</small><b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
+/* 랭킹 (이 기기 저장): 난이도 × 버전 (게임:모드:난이도:버전) */
+let RSEL={};const rkOk=r=>!window.phRk||!RSEL.ver||((r.m||"normal")===RSEL.diff&&phRk.ver("pang",r)===RSEL.ver);
+function rkBarInit(sel){if(window.phRk)RSEL=phRk.bar($("rkBar"),{game:"pang",diffs:[["easy","EASY"],["normal","NORMAL"],["hard","HARD"],["master","MASTER"]],sel,onChange:x=>{RSEL=x;rk($("rkL2"))}})}
+function rk(el){const l=rkLoad().filter(rkOk).slice(0,20);el.innerHTML=l.length?l.map((r,i)=>`<li class="${r.id===mine?"me":""}"><em>${i+1}</em>${esc(r.n)}${r.m&&window.phLv?phLv(r.m.toUpperCase()):""}<small>${r.c} COMBO</small><b>${r.s.toLocaleString()}</b></li>`).join(""):`<li class="empty">아직 기록이 없어요</li>`}
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
-  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
+  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,ts:Date.now(),d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,300)));RSEL={diff:mode,ver:window.phRk?phRk.vers("pang")[0].id:null};mine=r.id;$("nmF").classList.add("saved");rk($("rkL"));$("nmI").blur()});
 PHVS.init({id:'pang',name:()=>store.get("pang-name")||"",setName:n=>store.set("pang-name",n),score:()=>score,
  start:()=>{mode="normal";vsGb=0;vsAtk=0;["startOv","modeOv","overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);vsView(true);start();showChain("VS START!","연쇄로 방해 블록 보내기")},
  data:d=>{if(d.t==="bd"){oppB=String(d.g||"");$("opS").textContent=Number(d.s||0).toLocaleString();oppDraw();return}if(d.t==="gb"&&state==="play"){vsGb+=d.n;showChain("WARNING",d.n+"줄 올라와요!")}},
@@ -435,7 +438,7 @@ PHVS.init({id:'pang',name:()=>store.get("pang-name")||"",setName:n=>store.set("p
 $("vsB").onclick=()=>{unlockAudio();PHVS.menu()};
 $("startB").onclick=()=>{$("startOv").hidden=true;$("modeOv").hidden=false};$("modeX").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
 document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);phTut("pang-tut",{"goal": "같은 모양 4개가 붙으면 팡! 연달아 터지면 콤보.<br>맨 위까지 쌓이면 게임 끝!", "touch": [["← 밀기 →", "옮기기"], ["탭", "돌리기"], ["↓ 천천히 밀기", "천천히 내리기"], ["↓ 튕기기", "바로 내리기"]], "pc": [["← →", "옮기기"], ["↑ / X / Z", "돌리기"], ["↓", "천천히 내리기"], ["SPACE", "바로 내리기"]]},start)});$("againB").onclick=start;$("homeB").onclick=home;
-$("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
+$("rankB").onclick=()=>{rkBarInit(null);rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("quitB").onclick=()=>{$("pauseOv").hidden=true;gameOver()};
 $("restartB").onclick=()=>{if(state==="play"||state==="pause"||state==="over")start()};
 $("bgmB").onclick=()=>{bgmOn=!bgmOn;store.set("pang-bgm",bgmOn?"1":"0");bgmBtn();if(bgmOn&&state==="play")bgmPlay();else bgmStop()};bgmBtn();
@@ -445,5 +448,5 @@ addEventListener("resize",layout);
 hud();layout();requestAnimationFrame(tick);setTimeout(layout,300);
 </script>
 
-<script src="../games/ph.js?v=13"></script></body>
+<script src="../games/ph.js?v=14"></script></body>
 </html>
