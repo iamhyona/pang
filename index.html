@@ -110,7 +110,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 .pix[data-ic=bolt]{color:var(--gold);width:12px;height:12px}
 #bgmB.off .pix,#sfxB.off .pix{opacity:.3}
 </style>
-<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1793112221";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
+<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1793212149";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>/* 카톡 등 인앱 브라우저: 실제 보이는 높이로 화면 맞춤 */(function(){var d=document.documentElement;function f(){var h=window.innerHeight,v=window.visualViewport;if(v&&v.height>0)h=Math.min(h,Math.round(v.height));d.style.setProperty('--app-h',h+'px');if(typeof layout==='function')requestAnimationFrame(function(){layout()})}f();addEventListener('resize',f);if(window.visualViewport)visualViewport.addEventListener('resize',f);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(f);addEventListener('orientationchange',function(){setTimeout(f,300)});addEventListener('pageshow',f);setTimeout(f,250);setTimeout(f,1000)})();</script>
 <style>html,body{height:var(--app-h,100%)!important}@media (max-width:519px){.ph{bottom:auto!important;height:var(--app-h,100%)!important}}</style>
@@ -153,10 +153,10 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
       <div class="row"><button class="ob" id="againB">ONE MORE</button><button class="ob" id="homeB">HOME</button></div>
     </div>
     <div class="ov" id="modeOv" hidden>
-      <button class="ob mode easy" data-m="easy">EASY<small>SCORE ×0.5 · 가이드</small></button>
-      <button class="ob mode" data-m="normal">NORMAL<small>SCORE ×1</small></button>
-      <button class="ob mode red" data-m="hard">HARD<small>SCORE ×2</small></button>
-      <button class="ob mode master" data-m="master">MASTER<small>SCORE ×3 · 더 빠르게</small></button>
+      <button class="ob mode easy phDiff lv-e" data-m="easy">EASY</button>
+      <button class="ob mode phDiff lv-n" data-m="normal">NORMAL</button>
+      <button class="ob mode red phDiff lv-h" data-m="hard">HARD</button>
+      <button class="ob mode master phDiff lv-m" data-m="master">MASTER</button>
       <button class="mx" id="modeX" aria-label="닫기">✕</button>
     </div>
     <div class="ov" id="rankOv" hidden><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="ob" id="rankClose">CLOSE</button></div>
@@ -416,7 +416,7 @@ scr.addEventListener("pointerup",e=>{if(!sw)return;if(!cur||cur.born!==sw.b){sw=
   if(dy>CS*1.4&&(dt<220||sw.vy>.9))act("H");else if(!sw.moved&&Math.abs(dy)<CS*.5&&dt<350)act("CW");sw=null});
 scr.addEventListener("pointercancel",()=>{sw=null;soft=false});
 /* ---------- flow ---------- */
-function start(){["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();unlockAudio();bgmPlay()}
+function start(){window.phLvTheme&&phLvTheme(mode,$("well"));["startOv","overOv","pauseOv","rankOv","modeOv"].forEach(i=>$(i).hidden=true);reset();state="play";lastT=0;layout();unlockAudio();bgmPlay()}
 function pause(on){if(!G||state==="over")return;if(on&&window.PHVS&&PHVS.active)return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0;if(on)bgmStop();else bgmPlay()}
 function gameOver(){if(window.PHVS&&PHVS.active){state="over";cur=null;bgmStop();PHVS.over(score,true);return}state="over";cur=null;bgmStop();[523,415,330,262].forEach((f,i)=>tone("triangle",f,f*.98,.22,.02,i*.13));const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
   $("oS").textContent=score.toLocaleString();$("oC").textContent=maxChain;$("oL").textContent=stage;
@@ -432,7 +432,7 @@ function rkSend(r){return fetch(`${RANK_URL}?g=pang&a=add&n=${encodeURIComponent
 async function rkSync(){if(rkBusy)return;rkBusy=true;try{const S=rkUp();for(const r of rkLoad()){if(S.has(r.id))continue;if(!(await rkSend(r)))break;S.add(r.id);store.set("pang-up",JSON.stringify([...S]))}}catch(e){}rkBusy=false} /* 아직 안 올라간 이 기기 기록을 서버로 (예전 기록 포함) */
 async function rkFetch(){try{const j=await fetch(RANK_URL+"?g=pang&_="+Date.now(),{cache:"no-store"}).then(r=>r.json());if(j&&Array.isArray(j.top)){SRV=j.top;store.set("pang-srv",JSON.stringify(SRV));return true}}catch(e){}return false}
 function rkMerge(){let srv=SRV;if(!srv){try{srv=JSON.parse(store.get("pang-srv")||"null")}catch(e){}}const m=new Map();[...(srv||[]),...rkLoad()].forEach(r=>{const k=r.n+"|"+r.s+"|"+rkMo(r);if(!m.has(k))m.set(k,r)});return [...m.values()].sort((a,b)=>b.s-a.s)}
-function rkDraw(el){const l=rkMerge().slice(0,20);let hit=false;el.innerHTML=l.length?l.map((r,i)=>{const me=!hit&&myRec&&r.n===myRec.n&&+r.s===myRec.s;if(me)hit=true;return `<li class="${me?"me":""}"><em>${i+1}</em>${esc(r.n)}${window.phLv?phLv(rkMo(r).toUpperCase()):""}<small>${rkC(r)} COMBO</small><b>${Number(r.s).toLocaleString()}</b></li>`}).join(""):`<li class="empty">아직 기록이 없어요</li>`}
+function rkDraw(el){const l=rkMerge().slice(0,20);let hit=false;el.innerHTML=l.length?l.map((r,i)=>{const me=!hit&&myRec&&r.n===myRec.n&&+r.s===myRec.s;if(me)hit=true;return `<li class="${me?"me":""}"><em>${i+1}</em><span class="nm">${esc(r.n)}</span>${window.phLv?phLv(rkMo(r).toUpperCase()):""}<small>${rkC(r)} COMBO</small><b>${Number(r.s).toLocaleString()}</b></li>`}).join(""):`<li class="empty">아직 기록이 없어요</li>`}
 function rk(el){rkDraw(el);rkFetch().then(ok=>{if(ok)rkDraw(el)})}
 setTimeout(()=>rkSync(),1500);
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
@@ -454,5 +454,5 @@ addEventListener("resize",layout);
 hud();layout();requestAnimationFrame(tick);setTimeout(layout,300);
 </script>
 
-<script src="../games/ph.js?v=13"></script></body>
+<script src="../games/ph.js?v=18"></script></body>
 </html>
