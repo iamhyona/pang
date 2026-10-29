@@ -436,7 +436,7 @@ PHVS.init({id:'pang',name:()=>store.get("pang-name")||"",setName:n=>store.set("p
  stop:()=>{state="over";cur=null;bgmStop()},leave:()=>{vsView(false);home()}});
 $("vsB").onclick=()=>{unlockAudio();PHVS.menu()};
 const markLv=()=>document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.classList.toggle("sel",b.dataset.m===mode)); /* 지난번 난이도 미리 선택 */
-$("startB").onclick=()=>{$("startOv").hidden=true;mode=window.phPref?phPref.get("lv",mode):mode;markLv();$("modeOv").hidden=false};$("modeC").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
+$("startB").onclick=()=>{$("startOv").hidden=true;mode="normal";markLv();$("modeOv").hidden=false};$("modeC").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
 document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);window.phPref&&phPref.set("lv",mode);markLv();phTut("pang-tut",{"goal": "같은 모양 4개가 붙으면 팡! 연달아 터지면 콤보.<br>맨 위까지 쌓이면 게임 끝!", "touch": [["← 밀기 →", "옮기기"], ["탭", "돌리기"], ["↓ 천천히 밀기", "천천히 내리기"], ["↓ 튕기기", "바로 내리기"]], "pc": [["← →", "옮기기"], ["↑ / X / Z", "돌리기"], ["↓", "천천히 내리기"], ["SPACE", "바로 내리기"]]},start)});$("againB").onclick=start;$("homeB").onclick=home;
 $("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("quitB").onclick=()=>{$("pauseOv").hidden=true;gameOver()};
@@ -444,7 +444,7 @@ $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(fal
 function openSet(){if(!window.phSettings)return;const vs=vsOn(),was=state==="play"&&!vs;if(was){state="pause";lastT=0;soft=false;bgmStop()}
   phSettings.open({inGame:true,restart:vs?null:()=>start(),home:vs?null:()=>{vsView(false);home()},onClose:()=>{if(was&&state==="pause"&&$("pauseOv").hidden){state="play";lastT=0;bgmPlay()}}})}
 $("setB").onclick=openSet;
-function phInit(){if(!window.phPref)return;P.guide=!!phPref.get("guide",true);P.speed=+phPref.get("speed",1)||0;if(P.speed<0||P.speed>2)P.speed=1;P.fx=!!phPref.get("fx",true);P.hap=!!phPref.get("hap",true);mode=phPref.get("lv",store.get("pang-mode")||"normal");if(!MODES[mode])mode="normal";
+function phInit(){if(!window.phPref)return;P.guide=!!phPref.get("guide",true);P.speed=+phPref.get("speed",1)||0;if(P.speed<0||P.speed>2)P.speed=1;P.fx=!!phPref.get("fx",true);P.hap=!!phPref.get("hap",true);mode="normal";if(!MODES[mode])mode="normal";
   const bo=k=>({get:()=>P[k],set:v=>{P[k]=!!v;phPref.set(k,P[k])}});
   phSettings.config({guide:{label:"떨어질 자리 · EASY",...bo("guide")},speed:{get:()=>P.speed,set:v=>{P.speed=v|0;phPref.set("speed",P.speed)}},fx:bo("fx"),hap:bo("hap"),onSound:audioSync});
   phAudio.on(audioSync);
