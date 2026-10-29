@@ -364,7 +364,7 @@ function draw(){const c=cx,t=NOW||performance.now();c.setTransform(DPR,0,0,DPR,0
       if(T<POPA){const p=T/POPA,j=(Math.random()-.5)*CS*.08*p,sc=1+.28*Math.sin(p*Math.PI/2);sprite(v,"x",px+j,py+j,CS,sc,sc,1,.15+.55*p)}
       else{const p=(T-POPA)/POPB,sc=1.28*(1-p)*(1+.15*p);if(sc>.05)sprite(v,"x",px,py+CS*.4*p*0,CS,sc*1.05,sc*.95,1-p*.6,.7)}}}
   if(cur&&vis&&state!=="over"){let gy=0;while(fits({...cur,y:cur.y+gy+1}))gy++;
-    if(P.guide&&gy>0&&!cur.drop){c.strokeStyle="rgba(255,255,255,.3)";c.lineWidth=2;c.setLineDash([4,4]);for(const [x,y] of cells({...cur,y:cur.y+gy}))if(y>=HID){c.beginPath();c.arc(x*CS+CS/2,(y-HID)*CS+CS/2,CS*.32,0,7);c.stroke()}c.setLineDash([])}
+    if(P.guide&&mode==="easy"&&gy>0&&!cur.drop){c.strokeStyle="rgba(255,255,255,.3)";c.lineWidth=2;c.setLineDash([4,4]);for(const [x,y] of cells({...cur,y:cur.y+gy}))if(y>=HID){c.beginPath();c.arc(x*CS+CS/2,(y-HID)*CS+CS/2,CS*.32,0,7);c.stroke()}c.setLineDash([])}
     const a=vis.a*Math.PI/180,ch=[vis.x+Math.sin(a),vis.y-Math.cos(a)],wob=Math.sin(t/140)*.03;
     c.save();c.shadowColor="rgba(255,255,255,.5)";c.shadowBlur=12;
     const ms=cur.drop?"o":"";
@@ -446,7 +446,7 @@ function openSet(){if(!window.phSettings)return;const vs=vsOn(),was=state==="pla
 $("setB").onclick=openSet;
 function phInit(){if(!window.phPref)return;P.guide=!!phPref.get("guide",true);P.speed=+phPref.get("speed",1)||0;if(P.speed<0||P.speed>2)P.speed=1;P.fx=!!phPref.get("fx",true);P.hap=!!phPref.get("hap",true);mode=phPref.get("lv",store.get("pang-mode")||"normal");if(!MODES[mode])mode="normal";
   const bo=k=>({get:()=>P[k],set:v=>{P[k]=!!v;phPref.set(k,P[k])}});
-  phSettings.config({guide:{label:"떨어질 자리",...bo("guide")},speed:{get:()=>P.speed,set:v=>{P.speed=v|0;phPref.set("speed",P.speed)}},fx:bo("fx"),hap:bo("hap"),onSound:audioSync});
+  phSettings.config({guide:{label:"떨어질 자리 · EASY",...bo("guide")},speed:{get:()=>P.speed,set:v=>{P.speed=v|0;phPref.set("speed",P.speed)}},fx:bo("fx"),hap:bo("hap"),onSound:audioSync});
   phAudio.on(audioSync);
   phDAS({key:e=>e.target&&e.target.tagName==="INPUT"?null:e.key==="ArrowLeft"?"left":e.key==="ArrowRight"?"right":null,left:()=>act("L"),right:()=>act("R"),active:()=>state==="play"&&!document.querySelector(".phSet")})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",phInit);else setTimeout(phInit);
