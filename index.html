@@ -110,7 +110,7 @@ background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.5px),ra
 #pauseOv .phBtn,#rankOv .phBtn,#modeOv .phBtn{flex-shrink:0}
 html body #modeOv .phDiff.phDiff.phDiff.sel{background:color-mix(in srgb,var(--b) 16%,#12142a)!important;box-shadow:0 0 14px color-mix(in srgb,var(--b) 40%,transparent)!important}
 </style>
-<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1793514410";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
+<script>/* 옛 버전 캐시 자동 갱신 */(function(){var V="1793529285";try{fetch(location.pathname+"?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var m=t.match(/var V="(\d+)"/);if(m&&m[1]!==V&&!/[?&]v=/.test(location.search+"")){location.replace(location.pathname+"?v="+m[1])}else if(m&&m[1]!==V&&location.search.indexOf("v="+m[1])<0){location.replace(location.pathname+"?v="+m[1])}if(!(m&&m[1]!==V)&&window.__phDone)__phDone()}).catch(function(){window.__phDone&&__phDone()})}catch(e){window.__phDone&&__phDone()}})();</script>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>/* 카톡 등 인앱 브라우저: 실제 보이는 높이로 화면 맞춤 */(function(){var d=document.documentElement;function f(){var h=window.innerHeight,v=window.visualViewport;if(v&&v.height>0)h=Math.min(h,Math.round(v.height));d.style.setProperty('--app-h',h+'px');if(typeof layout==='function')requestAnimationFrame(function(){layout()})}f();addEventListener('resize',f);if(window.visualViewport)visualViewport.addEventListener('resize',f);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(f);addEventListener('orientationchange',function(){setTimeout(f,300)});addEventListener('pageshow',f);setTimeout(f,250);setTimeout(f,1000)})();</script>
 <style>html,body{height:var(--app-h,100%)!important}@media (max-width:519px){.ph{bottom:auto!important;height:var(--app-h,100%)!important}}</style>
@@ -404,7 +404,7 @@ function start(){pc=0;window.phLvTheme&&phLvTheme(mode,$("well"));["startOv","ov
 function pause(on){if(!G||state==="over")return;if(on&&window.PHVS&&PHVS.active)return;state=on?"pause":"play";$("pauseOv").hidden=!on;lastT=0;if(on)bgmStop();else bgmPlay()}
 function gameOver(){if(window.PHVS&&PHVS.active){state="over";cur=null;bgmStop();PHVS.over(score,true);return}state="over";cur=null;bgmStop();hv([50,40,50]);[523,415,330,262].forEach((f,i)=>tone("triangle",f,f*.98,.22,.02,i*.13));const best=+(store.get("pang-best")||0);if(score>best)store.set("pang-best",score);
   $("oS").textContent=score.toLocaleString();$("oC").textContent=maxChain;$("oL").textContent=stage;
-  $("nmI").value=store.get("pang-name")||"";$("nmF").classList.toggle("saved",score<=0);mine=null;myRec=null;rk($("rkL"));setTimeout(()=>{$("overOv").hidden=false},600);hud()}
+  $("nmI").value=store.get("pang-name")||"";$("nmF").classList.toggle("saved",score<=0);$("nmF").querySelector("button").textContent="OK";mine=null;myRec=null;rk($("rkL"));setTimeout(()=>{$("overOv").hidden=false},600);hud()}
 function home(){state=null;bgmStop();G=null;cur=null;vis=null;queue=null;anim=null;parts=[];rings=[];floats=[];["overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);$("startOv").hidden=false;score=0;maxChain=0;stage=1;hud();draw();drawNext()}
 /* 랭킹: 서버(시트 '팡야팡야' 탭)에 저장해서 모두 같이 봄 + 이 기기 기록은 서버에 올라갈 때까지 함께 표시 */
 const RK="pang-rank",RANK_URL="https://script.google.com/macros/s/AKfycbzkdjVleobj98oyxlC77cUf5txCRiSB6D1zgRWU56pX22ElXAx9R8xFRGnV0nKAUbwC/exec";let mine=null,myRec=null,SRV=null,rkBusy=false;
@@ -420,7 +420,7 @@ function rkDraw(el){const l=rkMerge().slice(0,20);let hit=false;el.innerHTML=l.l
 function rk(el){rkDraw(el);rkFetch().then(ok=>{if(ok)rkDraw(el)})}
 setTimeout(()=>rkSync(),1500);
 $("nmF").addEventListener("submit",e=>{e.preventDefault();if(mine||score<=0)return;const n=($("nmI").value.trim()||"익명").slice(0,8);store.set("pang-name",n);
-  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;myRec=r;$("nmF").classList.add("saved");rkDraw($("rkL"));$("nmI").blur();rkSync().then(()=>rk($("rkL")))});
+  const r={id:Date.now()+"",n,s:score,c:maxChain,l:stage,m:mode,d:new Date().toISOString().slice(0,10)};const a=rkLoad();a.push(r);a.sort((x,y)=>y.s-x.s);store.set(RK,JSON.stringify(a.slice(0,50)));mine=r.id;myRec=r;$("nmF").classList.add("saved");$("nmF").querySelector("button").textContent="✓";setTimeout(()=>{if(state==="over"&&!$("overOv").hidden){$("overOv").hidden=true;$("rankB").click()}},700); /* 2026-11-01: 등록하면 ✓ 후 랭킹 화면 자동 */rkDraw($("rkL"));$("nmI").blur();rkSync().then(()=>rk($("rkL")))});
 PHVS.init({id:'pang',name:()=>store.get("pang-name")||"",setName:n=>store.set("pang-name",n),score:()=>score,
  start:()=>{mode="normal";vsGb=0;vsAtk=0;["startOv","modeOv","overOv","pauseOv","rankOv"].forEach(i=>$(i).hidden=true);vsView(true);start();showChain("VS START!","연쇄로 방해 블록 보내기")},
  data:d=>{if(d.t==="bd"){oppB=String(d.g||"");$("opS").textContent=Number(d.s||0).toLocaleString();oppDraw();return}if(d.t==="gb"&&state==="play"){vsGb+=d.n;showChain("WARNING",d.n+"줄 올라와요!");hv(40)}},
@@ -429,7 +429,7 @@ $("vsB").onclick=()=>{unlockAudio();PHVS.menu()};
 const markLv=()=>document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.classList.toggle("sel",b.dataset.m===mode)); /* 지난번 난이도 미리 선택 */
 $("startB").onclick=()=>{$("startOv").hidden=true;mode="normal";markLv();$("modeOv").hidden=false};$("modeC").onclick=()=>{$("modeOv").hidden=true;$("startOv").hidden=false};
 document.querySelectorAll("#modeOv [data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;store.set("pang-mode",mode);window.phPref&&phPref.set("lv",mode);markLv();phTut("pang-tut",{"goal": "하늘에서 팡팡이들이 내려와요!<br>같은 팡팡이 4마리가 모이면 팡!", "touch": [["← 밀기 →", "옮기기"], ["탭", "돌리기"], ["↓ 천천히 밀기", "천천히 내리기"], ["↓ 튕기기", "바로 내리기"]], "pc": [["← →", "옮기기"], ["↑ / X / Z", "돌리기"], ["↓", "천천히 내리기"], ["SPACE", "바로 내리기"]]},start)});$("againB").onclick=start;$("homeB").onclick=home;
-$("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>$("rankOv").hidden=true;
+$("rankB").onclick=()=>{rk($("rkL2"));$("rankOv").hidden=false};$("rankClose").onclick=()=>{$("rankOv").hidden=true;if(state==="over"&&$("startOv").hidden)$("overOv").hidden=false}; /* 게임 끝난 뒤 랭킹을 닫으면 결과 화면으로 */
 $("pauseB").onclick=()=>pause(state==="play");$("resumeB").onclick=()=>pause(false);$("rstB").onclick=()=>start();$("menuB").onclick=()=>home();
 /* 설정 창: 게임 중 톱니 → 잠깐 멈춤, 닫으면 이어서 (대전 중엔 멈출 수 없어서 그냥 열기) */
 function openSet(){if(!window.phSettings)return;const vs=vsOn(),was=state==="play"&&!vs;if(was){state="pause";lastT=0;soft=false;bgmStop()}
