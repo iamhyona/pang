@@ -158,7 +158,7 @@ html body #modeOv .phDiff.phDiff.phDiff.sel{background:color-mix(in srgb,var(--b
       <button class="phDiff lv-m" data-m="master">MASTER</button>
       <button class="phBtn sub" id="modeC">CLOSE</button>
     </div>
-    <div class="ov" id="rankOv" hidden><div class="phLvTabs" id="rkLv"><button class="lv-e" data-l="easy">E</button><button class="lv-n" data-l="normal">N</button><button class="lv-h" data-l="hard">H</button><button class="lv-m" data-l="master">M</button></div><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="phBtn sub" id="rankClose">CLOSE</button></div>
+    <div class="ov" id="rankOv" hidden><div class="rk"><h4>RANKING</h4><ol id="rkL2"></ol></div><button class="phBtn sub" id="rankClose">CLOSE</button></div>
   </div>
 </div>
 <script>
@@ -443,7 +443,7 @@ function rkSend(r){return fetch(`${RANK_URL}?g=pang&a=add&n=${encodeURIComponent
 async function rkSync(){if(rkBusy)return;rkBusy=true;try{const S=rkUp();for(const r of rkLoad()){if(S.has(r.id))continue;if(!(await rkSend(r)))break;S.add(r.id);store.set("pang-up",JSON.stringify([...S]))}}catch(e){}rkBusy=false} /* 아직 안 올라간 이 기기 기록을 서버로 (예전 기록 포함) */
 async function rkFetch(){try{const j=await fetch(RANK_URL+"?g=pang&_="+Date.now(),{cache:"no-store"}).then(r=>r.json());if(j&&Array.isArray(j.top)){SRV=j.top;store.set("pang-srv",JSON.stringify(SRV));return true}}catch(e){}return false}
 let RKL="normal";const rkLvSync=()=>document.querySelectorAll("#rkLv button").forEach(b=>b.classList.toggle("on",b.dataset.l===RKL)); /* 2026-11-02: 난도별 랭킹 */
-function rkMerge(){let srv=SRV;if(!srv){try{srv=JSON.parse(store.get("pang-srv")||"null")}catch(e){}}const m=new Map();[...(srv||[]),...rkLoad()].forEach(r=>{const k=r.n+"|"+r.s+"|"+rkMo(r);if(!m.has(k))m.set(k,r)});return [...m.values()].filter(r=>rkMo(r)===RKL).sort((a,b)=>b.s-a.s)}
+function rkMerge(){let srv=SRV;if(!srv){try{srv=JSON.parse(store.get("pang-srv")||"null")}catch(e){}}const m=new Map();[...(srv||[]),...rkLoad()].forEach(r=>{const k=r.n+"|"+r.s+"|"+rkMo(r);if(!m.has(k))m.set(k,r)});return [...m.values()].sort((a,b)=>b.s-a.s)} /* 2026-11-19: 난이도 통합 랭킹 (난이도 배율 EASY ×0.5 · NORMAL ×1 · HARD ×2 · MASTER ×3로 비교, 난이도는 뱃지로만) */
 function rkDraw(el){const l=rkMerge().slice(0,20);let hit=false;el.innerHTML=l.length?l.map((r,i)=>{const me=!hit&&myRec&&r.n===myRec.n&&+r.s===myRec.s;if(me)hit=true;return `<li class="${me?"me":""}"><em>${i+1}</em><span class="nm">${esc(r.n)}</span>${window.phLv?phLv(rkMo(r).toUpperCase()):""}<small>${rkC(r)} COMBO</small><b>${Number(r.s).toLocaleString()}</b></li>`}).join(""):`<li class="empty">아직 기록이 없어요</li>`}
 function rk(el){rkDraw(el);rkFetch().then(ok=>{if(ok)rkDraw(el)})}
 setTimeout(()=>rkSync(),1500);
